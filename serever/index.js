@@ -2,13 +2,15 @@ const express = require('express')
 const {graphqlHTTP} = require('express-graphql')
 const cors = require('cors')
 const schema = require('./shcema')
-const users = [
-    {
-        id: 1,
-        name: "Gexam",
-        age: 25
-    }
-]
+const fs = require('fs')
+const path = require('path')
+const {json} = require("express");
+
+let users = []
+fs.readFile(path.join(__dirname, 'db.json'), (err, data) => {
+    users = JSON.parse(data)
+});
+
 
 const app = express()
 
@@ -29,6 +31,7 @@ const root = {
     createUser: ({input}) => {
         const user = creatUser(input)
         users.push(user)
+        fs.writeFile("db.json", JSON.stringify(users), (err) => {});
         return user
     }
 }
